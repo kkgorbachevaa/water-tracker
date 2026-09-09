@@ -1,0 +1,15 @@
+.page {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  padding: 24px;
+}
+
+.title {
+  margin: 0;
+  color: #1677ff;
+  font-size: clamp(2rem, 8vw, 4rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  text-align: center;
+}
