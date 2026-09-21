@@ -2,14 +2,183 @@
   display: grid;
   min-height: 100vh;
   place-items: center;
-  padding: 24px;
+  padding: 32px;
+}
+
+.startScreen {
+  display: grid;
+  width: min(100%, 480px);
+  gap: 18px;
+  padding: 28px;
+  border: 1px solid #dce8f8;
+  border-radius: 28px;
+  background-color: #ffffff;
+  box-shadow: 0 20px 60px rgb(51 92 146 / 12%);
+}
+
+.hero {
+  display: grid;
+  gap: 18px;
+  text-align: center;
+}
+
+.illustration {
+  display: block;
+  width: min(100%, 300px);
+  height: auto;
+  margin: 0 auto;
+  border-radius: 24px;
+}
+
+.intro {
+  display: grid;
+  gap: 10px;
 }
 
 .title {
   margin: 0;
-  color: #1677ff;
-  font-size: clamp(2rem, 8vw, 4rem);
+  color: #10203d;
+  font-size: clamp(2rem, 5vw, 2.75rem);
   line-height: 1.1;
   letter-spacing: -0.03em;
-  text-align: center;
+}
+
+.description {
+  max-width: 380px;
+  margin: 0 auto;
+  color: #64748f;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.goalCard {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid #dce8f8;
+  border-radius: 18px;
+  background-color: #ffffff;
+  box-shadow: 0 8px 24px rgb(51 92 146 / 8%);
+}
+
+.sectionTitle {
+  margin: 0;
+  color: #10203d;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.goalSelect {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #cddcf0;
+  border-radius: 12px;
+  color: #10203d;
+  background-color: #ffffff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.goalSelect:focus-visible {
+  border-color: #1677ff;
+  outline: 3px solid rgb(22 119 255 / 18%);
+}
+
+.infoCard {
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid #d8e9ff;
+  border-radius: 18px;
+  background-color: #eef6ff;
+}
+
+.infoIcon {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border-radius: 50%;
+  color: #ffffff;
+  background-color: #1677ff;
+  font-weight: 700;
+}
+
+.infoTitle {
+  margin: 2px 0 6px;
+  color: #10203d;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.infoText {
+  margin: 0;
+  color: #5c6f91;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.startButton {
+  width: 100%;
+  padding: 15px 24px;
+  border: 0;
+  border-radius: 14px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #2686ff 0%, #0969e8 100%);
+  box-shadow: 0 10px 24px rgb(22 119 255 / 24%);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.startButton:hover {
+  box-shadow: 0 12px 28px rgb(22 119 255 / 32%);
+  transform: translateY(-1px);
+}
+
+.startButton:active {
+  box-shadow: 0 6px 16px rgb(22 119 255 / 22%);
+  transform: translateY(1px);
+}
+
+.startButton:focus-visible {
+  outline: 3px solid rgb(22 119 255 / 28%);
+  outline-offset: 3px;
+}
+
+/* на узком экране карточка становится полноценной страницей */
+@media (max-width: 560px) {
+  .page {
+    place-items: stretch;
+    padding: 0;
+  }
+
+  .startScreen {
+    width: 100%;
+    min-height: 100vh;
+    padding: 24px 20px;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .illustration {
+    width: min(100%, 300px);
+  }
+}
+
+@media (max-width: 360px) {
+  .startScreen {
+    padding: 20px 16px;
+  }
+
+  .infoCard {
+    grid-template-columns: 32px 1fr;
+    padding: 16px;
+  }
 }
