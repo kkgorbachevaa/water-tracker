@@ -1,12 +1,70 @@
-import waterBottleImage from './assets/water-bottle.png'
-import styles from './App.module.css'
+import waterBottleImage from "./assets/water-bottle.png";
+import styles from "./App.module.css";
+import { useState } from "react";
+import type { WaterTrackerSession } from "./types/waterTracker";
+import type { SubmitEvent } from "react";
 
 function App() {
+  // Храним ввод строкой, чтобы пользователь мог полностью очистить поле
+  const [dailyGoal, setDailyGoal] = useState("2000");
+  // состояние ошибки
+  const [error, setError] = useState<string | null>(null);
+
+  // состояние сессии
+  const [session, setSession] = useState<WaterTrackerSession | null>(null);
+
+  function handleStart(event: SubmitEvent<HTMLFormElement>) {
+    // Обрабатываем отправку формы в React без перезагрузки страницы
+    event.preventDefault();
+
+    // Преобразуем строку в число только перед проверкой цели
+    const dailyGoalMl = Number(dailyGoal);
+
+    if (!Number.isSafeInteger(dailyGoalMl) || dailyGoalMl <= 0) {
+      setError("Укажи цель в миллилитрах — целое число больше нуля");
+      return;
+    }
+
+    setError(null);
+
+    // новая сессия начинается с выбранной цели и пустой истории
+    setSession({
+      dailyGoalMl,
+      entries: [],
+      lastSelectedContainer: null,
+    });
+  }
+
+  if (session !== null) {
+    return (
+      <main className={styles.page}>
+        <section className={styles.startScreen} aria-labelledby="tracker-title">
+          <h1 id="tracker-title" className={styles.title}>
+            Сегодня <span aria-hidden="true">💧</span>
+          </h1>
+
+          <section
+            className={styles.goalCard}
+            aria-labelledby="session-goal-title"
+          >
+            <h2 id="session-goal-title" className={styles.sectionTitle}>
+              Моя цель на сегодня
+            </h2>
+
+            <p>{session.dailyGoalMl} мл</p>
+          </section>
+        </section>
+      </main>
+    );
+  }
+
   return (
     <main className={styles.page}>
-      <section
+      <form
         className={styles.startScreen}
         aria-labelledby="start-screen-title"
+        onSubmit={handleStart}
+        noValidate
       >
         <div className={styles.hero}>
           <img
@@ -27,31 +85,36 @@ function App() {
           </div>
         </div>
 
-        <section
-          className={styles.goalCard}
-          aria-labelledby="daily-goal-title"
-        >
+        <section className={styles.goalCard} aria-labelledby="daily-goal-title">
           <h2 id="daily-goal-title" className={styles.sectionTitle}>
             Моя цель на сегодня
           </h2>
 
-          {/* Логику сохранения выбранной цели вынесу в отдельную задачу */}
-          <select
+          <label htmlFor="daily-goal">Дневная цель, мл</label>
+
+          <input
             id="daily-goal"
-            className={styles.goalSelect}
-            defaultValue="2000"
-          >
-            <option value="1500">1500 мл</option>
-            <option value="2000">2000 мл</option>
-            <option value="2500">2500 мл</option>
-            <option value="3000">3000 мл</option>
-          </select>
+            className={styles.goalInput}
+            type="number"
+            min="1"
+            step="1"
+            value={dailyGoal}
+            aria-invalid={error !== null}
+            aria-describedby={error ? "daily-goal-error" : undefined}
+            onChange={(event) => {
+              setDailyGoal(event.target.value);
+              setError(null);
+            }}
+          />
+
+          {error && (
+            <p id="daily-goal-error" className={styles.error} role="alert">
+              {error}
+            </p>
+          )}
         </section>
 
-        <aside
-          className={styles.infoCard}
-          aria-labelledby="water-info-title"
-        >
+        <aside className={styles.infoCard} aria-labelledby="water-info-title">
           <span className={styles.infoIcon} aria-hidden="true">
             i
           </span>
@@ -69,12 +132,15 @@ function App() {
           </div>
         </aside>
 
-        <button className={styles.startButton} type="button">
+        <button
+          className={styles.startButton}
+          type="submit"
+        >
           Начать
         </button>
-      </section>
+      </form>
     </main>
-  )
+  );
 }
 
-export default App
+export default App;
