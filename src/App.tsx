@@ -3,6 +3,7 @@ import styles from "./App.module.css";
 import { useState } from "react";
 import type { WaterTrackerSession } from "./types/waterTracker";
 import type { SubmitEvent } from "react";
+import TrackerScreen from "./components/TrackerScreen";
 
 function App() {
   // Храним ввод строкой, чтобы пользователь мог полностью очистить поле
@@ -36,26 +37,7 @@ function App() {
   }
 
   if (session !== null) {
-    return (
-      <main className={styles.page}>
-        <section className={styles.startScreen} aria-labelledby="tracker-title">
-          <h1 id="tracker-title" className={styles.title}>
-            Сегодня <span aria-hidden="true">💧</span>
-          </h1>
-
-          <section
-            className={styles.goalCard}
-            aria-labelledby="session-goal-title"
-          >
-            <h2 id="session-goal-title" className={styles.sectionTitle}>
-              Моя цель на сегодня
-            </h2>
-
-            <p>{session.dailyGoalMl} мл</p>
-          </section>
-        </section>
-      </main>
-    );
+    return <TrackerScreen session={session} />;
   }
 
   return (
@@ -132,10 +114,7 @@ function App() {
           </div>
         </aside>
 
-        <button
-          className={styles.startButton}
-          type="submit"
-        >
+        <button className={styles.startButton} type="submit">
           Начать
         </button>
       </form>
