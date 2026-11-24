@@ -1,5 +1,5 @@
 import { render, screen, within } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import type { WaterTrackerSession } from "../types/waterTracker";
 import TrackerScreen from "./TrackerScreen";
 
@@ -13,7 +13,7 @@ describe("Основной экран", () => {
         lastSelectedContainer: null,
       };
 
-      render(<TrackerScreen session={session} />);
+      render(<TrackerScreen session={session} onAddWater={vi.fn()} />);
 
       const goalCard = screen.getByRole("region", {
         name: "Моя цель на сегодня",
@@ -55,7 +55,7 @@ describe("Основной экран", () => {
       lastSelectedContainer: null,
     };
 
-    render(<TrackerScreen session={session} />);
+    render(<TrackerScreen session={session} onAddWater={vi.fn()} />);
 
     const goalCard = screen.getByRole("region", {
       name: "Моя цель на сегодня",
@@ -105,7 +105,7 @@ describe("Основной экран", () => {
       lastSelectedContainer: null,
     };
 
-    render(<TrackerScreen session={session} />);
+    render(<TrackerScreen session={session} onAddWater={vi.fn()} />);
 
     const progressCard = screen.getByRole("region", {
       name: "Мой прогресс",
@@ -131,7 +131,7 @@ describe("Основной экран", () => {
       lastSelectedContainer: null,
     };
 
-    const { rerender } = render(<TrackerScreen session={session} />);
+    const { rerender } = render(<TrackerScreen session={session} onAddWater={vi.fn()} />);
 
     expect(screen.getByText("Осталось: 2000 мл")).toBeInTheDocument();
 
@@ -149,7 +149,7 @@ describe("Основной экран", () => {
     };
 
     // Обновляем props уже отрисованного компонента
-    rerender(<TrackerScreen session={updatedSession} />);
+    rerender(<TrackerScreen session={updatedSession} onAddWater={vi.fn()} />);
 
     const goalCard = screen.getByRole("region", {
       name: "Моя цель на сегодня",
