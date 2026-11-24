@@ -33,28 +33,30 @@ export default function TrackerScreen({
           Сегодня <span aria-hidden="true">💧</span>
         </h1>
 
-        <section
-          className={styles.goalCard}
-          aria-labelledby="session-goal-title"
-        >
-          <h2 id="session-goal-title" className={styles.sectionTitle}>
-            Моя цель на сегодня
-          </h2>
+        <div className={styles.trackerSummary}>
+          <section
+            className={styles.goalCard}
+            aria-labelledby="session-goal-title"
+          >
+            <h2 id="session-goal-title" className={styles.sectionTitle}>
+              Моя цель на сегодня
+            </h2>
 
-          <p>{session.dailyGoalMl} мл</p>
-        </section>
-        <section
-          className={styles.goalCard}
-          aria-labelledby="daily-progress-title"
-        >
-          <h2 id="daily-progress-title" className={styles.sectionTitle}>
-            Мой прогресс
-          </h2>
+            <p>{session.dailyGoalMl} мл</p>
+          </section>
+          <section
+            className={styles.goalCard}
+            aria-labelledby="daily-progress-title"
+          >
+            <h2 id="daily-progress-title" className={styles.sectionTitle}>
+              Мой прогресс
+            </h2>
 
-          <p>Выпито: {progress.consumedMl} мл</p>
-          <p>Осталось: {progress.remainingMl} мл</p>
-          <p>Выполнение цели: {formattedProgress}%</p>
-        </section>
+            <p>Выпито: {progress.consumedMl} мл</p>
+            <p>Осталось: {progress.remainingMl} мл</p>
+            <p>Выполнение цели: {formattedProgress}%</p>
+          </section>
+        </div>
         <AddWaterForm onAddWater={onAddWater} />
       </section>
     </main>
