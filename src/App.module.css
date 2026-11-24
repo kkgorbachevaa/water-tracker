@@ -21,10 +21,14 @@
   align-content: start;
 }
 
-.hero {
+.trackerSummary {
   display: grid;
   gap: 18px;
-  text-align: center;
+}
+
+.startContent {
+  display: grid;
+  gap: 18px;
 }
 
 .illustration {
@@ -38,6 +42,7 @@
 .intro {
   display: grid;
   gap: 10px;
+  text-align: center;
 }
 
 .title {
@@ -79,6 +84,11 @@
   margin: 0;
   padding: 0;
   border: 0;
+}
+
+.waterOptions + .waterOptions,
+.waterOptions + p {
+  margin-block-start: 8px;
 }
 
 .waterOptions legend {
@@ -203,6 +213,35 @@
 .startButton:focus-visible {
   outline: 3px solid rgb(22 119 255 / 28%);
   outline-offset: 3px;
+}
+
+@media (min-width: 800px) {
+  .startLayout,
+  .trackerScreen {
+    width: min(100%, 960px);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+  }
+
+  .startLayout {
+    align-items: center;
+  }
+
+  .startLayout > .illustration {
+    width: 100%;
+  }
+
+  .startLayout .title {
+    font-size: 2.25rem;
+  }
+
+  .trackerScreen {
+    align-items: start;
+  }
+
+  .trackerScreen > .title {
+    /* Заголовок занимает всю строку над двумя колонками */
+    grid-column: 1 / -1;
+  }
 }
 
 /* на узком экране карточка становится полноценной страницей */
