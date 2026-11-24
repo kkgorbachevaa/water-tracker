@@ -71,6 +71,39 @@
   margin: 0;
 }
 
+.waterOptions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.waterOptions legend {
+  margin-bottom: 8px;
+  padding: 0;
+  font-weight: 600;
+}
+
+.waterOptions label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid #cddcf0;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.waterOptions input {
+  flex-shrink: 0;
+  margin: 0;
+  accent-color: #1677ff;
+}
+
 .sectionTitle {
   margin: 0;
   color: #10203d;
@@ -102,7 +135,7 @@
 }
 
 /* Выделяем поле, только когда проверка обнаружила ошибку */
-.goalInput[aria-invalid='true'] {
+.goalInput[aria-invalid="true"] {
   border-color: #b42318;
 }
 
@@ -201,5 +234,10 @@
   .infoCard {
     grid-template-columns: 32px 1fr;
     padding: 16px;
+  }
+
+  /* На самых узких экранах оставляем место для полных подписей */
+  .waterOptions {
+    grid-template-columns: 1fr;
   }
 }

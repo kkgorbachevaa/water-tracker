@@ -1,13 +1,22 @@
-import type { WaterTrackerSession } from "../types/waterTracker";
+import type {
+  WaterTrackerSession,
+  WaterContainer,
+  ContainerPortion,
+} from "../types/waterTracker";
 import styles from "../App.module.css";
 import { calculateDailyProgress } from "../utils/calculateDailyProgress";
+import AddWaterForm from "./AddWaterForm";
 
 type TrackerScreenProps = {
   session: WaterTrackerSession;
+  onAddWater: (container: WaterContainer, portion: ContainerPortion) => void;
 };
 
-// Сессией управляет App, а экран получает ее для отображения
-export default function TrackerScreen({ session }: TrackerScreenProps) {
+// Сессией управляет App, а экран отображает данные и передает действия
+export default function TrackerScreen({
+  session,
+  onAddWater,
+}: TrackerScreenProps) {
   const progress = calculateDailyProgress(session);
 
   // Округляем только отображение, сохраняя точность самих расчетов
@@ -46,6 +55,7 @@ export default function TrackerScreen({ session }: TrackerScreenProps) {
           <p>Осталось: {progress.remainingMl} мл</p>
           <p>Выполнение цели: {formattedProgress}%</p>
         </section>
+        <AddWaterForm onAddWater={onAddWater} />
       </section>
     </main>
   );

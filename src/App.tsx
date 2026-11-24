@@ -1,9 +1,14 @@
 import waterBottleImage from "./assets/water-bottle.png";
 import styles from "./App.module.css";
 import { useState } from "react";
-import type { WaterTrackerSession } from "./types/waterTracker";
+import type {
+  WaterTrackerSession,
+  WaterContainer,
+  ContainerPortion,
+} from "./types/waterTracker";
 import type { SubmitEvent } from "react";
 import TrackerScreen from "./components/TrackerScreen";
+import { createContainerEntry } from "./utils/createContainerEntry";
 
 function App() {
   // Храним ввод строкой, чтобы пользователь мог полностью очистить поле
@@ -36,8 +41,28 @@ function App() {
     });
   }
 
+  function handleAddWater(
+    container: WaterContainer,
+    portion: ContainerPortion,
+  ) {
+    // Создаем запись один раз на отправку формы
+    const entry = createContainerEntry(container, portion);
+
+    setSession((currentSession) => {
+      if (currentSession === null) {
+        return currentSession;
+      }
+
+      return {
+        ...currentSession,
+        entries: [...currentSession.entries, entry],
+        lastSelectedContainer: container,
+      };
+    });
+  }
+
   if (session !== null) {
-    return <TrackerScreen session={session} />;
+    return <TrackerScreen session={session} onAddWater={handleAddWater} />;
   }
 
   return (
