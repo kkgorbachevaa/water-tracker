@@ -101,7 +101,7 @@ export default function AddWaterForm({ onAddWater }: AddWaterFormProps) {
       <p>К добавлению: {amountMl} мл</p>
 
       <button className={styles.startButton} type="submit">
-        Добавить воду
+        Добавить запись
       </button>
     </form>
   );

@@ -17,7 +17,7 @@ describe("Добавление воды в сессию", () => {
     });
 
     const addButton = screen.getByRole("button", {
-      name: "Добавить воду",
+      name: "Добавить запись",
     });
 
     await user.click(addButton);
@@ -59,6 +59,32 @@ describe("Добавление воды в сессию", () => {
     ).toBeInTheDocument();
   });
 
+  it("уменьшает уровень воды в бутылке при добавлении записи", async () => {
+    const user = userEvent.setup();
+
+    render(<App />);
+
+    const goalInput = screen.getByRole("spinbutton", {
+      name: "Дневная цель, мл",
+    });
+    await user.clear(goalInput);
+    await user.type(goalInput, "400{Enter}");
+
+    const addButton = screen.getByRole("button", { name: "Добавить запись" });
+
+    expect(screen.getByTestId("bottle-water")).toHaveStyle({ height: "100%" });
+
+    await user.click(addButton);
+    expect(screen.getByTestId("bottle-water")).toHaveStyle({ height: "50%" });
+
+    await user.click(addButton);
+    expect(screen.getByTestId("bottle-water")).toHaveStyle({ height: "0%" });
+
+    await user.click(addButton);
+    expect(screen.getByText("Выполнение цели: 150%")).toBeInTheDocument();
+    expect(screen.getByTestId("bottle-water")).toHaveStyle({ height: "0%" });
+  });
+
   it("позволяет добавлять воду после достижения и превышения цели", async () => {
     const user = userEvent.setup();
 
@@ -76,7 +102,7 @@ describe("Добавление воды в сессию", () => {
     });
 
     const addButton = screen.getByRole("button", {
-      name: "Добавить воду",
+      name: "Добавить запись",
     });
 
     await user.click(addButton);
@@ -131,7 +157,9 @@ describe("Добавление воды в сессию", () => {
 
     await user.click(screen.getByRole("button", { name: "Начать" }));
 
-    await user.dblClick(screen.getByRole("button", { name: "Добавить воду" }));
+    await user.dblClick(
+      screen.getByRole("button", { name: "Добавить запись" }),
+    );
 
     const progressCard = screen.getByRole("region", {
       name: "Мой прогресс",

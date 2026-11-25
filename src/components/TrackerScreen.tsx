@@ -6,6 +6,7 @@ import type {
 import styles from "../App.module.css";
 import { calculateDailyProgress } from "../utils/calculateDailyProgress";
 import AddWaterForm from "./AddWaterForm";
+import WaterBottle from "./WaterBottle";
 
 type TrackerScreenProps = {
   session: WaterTrackerSession;
@@ -52,9 +53,17 @@ export default function TrackerScreen({
               Мой прогресс
             </h2>
 
-            <p>Выпито: {progress.consumedMl} мл</p>
-            <p>Осталось: {progress.remainingMl} мл</p>
-            <p>Выполнение цели: {formattedProgress}%</p>
+            <div className={styles.progressContent}>
+              <WaterBottle levelPercent={progress.bottleLevelPercent} />
+
+              <div className={styles.progressMetrics}>
+                <p className={styles.remainingMetric}>
+                  Осталось: {progress.remainingMl}&nbsp;мл
+                </p>
+                <p>Выпито: {progress.consumedMl}&nbsp;мл</p>
+                <p>Выполнение цели: {formattedProgress}%</p>
+              </div>
+            </div>
           </section>
         </div>
         <AddWaterForm onAddWater={onAddWater} />

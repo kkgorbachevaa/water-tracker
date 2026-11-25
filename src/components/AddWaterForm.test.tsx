@@ -19,7 +19,7 @@ describe("Форма добавления воды", () => {
     expect(screen.getByText("К добавлению: 200 мл")).toBeInTheDocument();
     expect(onAddWater).not.toHaveBeenCalled();
 
-    await user.click(screen.getByRole("button", { name: "Добавить воду" }));
+    await user.click(screen.getByRole("button", { name: "Добавить запись" }));
 
     expect(onAddWater).toHaveBeenCalledTimes(1);
     expect(onAddWater).toHaveBeenCalledWith(
@@ -65,7 +65,7 @@ describe("Форма добавления воды", () => {
       screen.getByText(`К добавлению: ${testCase.amountMl} мл`),
     ).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Добавить воду" }));
+    await user.click(screen.getByRole("button", { name: "Добавить запись" }));
 
     expect(onAddWater).toHaveBeenCalledTimes(1);
     expect(onAddWater).toHaveBeenCalledWith(
@@ -84,7 +84,7 @@ describe("Форма добавления воды", () => {
     await user.click(screen.getByRole("radio", { name: "500 мл" }));
     await user.click(screen.getByRole("radio", { name: "Половина" }));
 
-    const addButton = screen.getByRole("button", { name: "Добавить воду" });
+    const addButton = screen.getByRole("button", { name: "Добавить запись" });
 
     await user.click(addButton);
 
@@ -128,7 +128,7 @@ describe("Форма добавления воды", () => {
 
     await user.tab();
 
-    expect(screen.getByRole("button", { name: "Добавить воду" })).toHaveFocus();
+    expect(screen.getByRole("button", { name: "Добавить запись" })).toHaveFocus();
 
     await user.keyboard("{Enter}");
 
