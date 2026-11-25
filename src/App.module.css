@@ -26,6 +26,23 @@
   gap: 18px;
 }
 
+.progressContent {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  align-items: center;
+  gap: 12px;
+}
+
+.progressMetrics {
+  display: grid;
+  gap: 8px;
+  overflow-wrap: anywhere;
+}
+
+.remainingMetric {
+  font-weight: 700;
+}
+
 .startContent {
   display: grid;
   gap: 18px;
