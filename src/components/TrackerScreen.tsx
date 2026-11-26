@@ -1,8 +1,4 @@
-import type {
-  WaterTrackerSession,
-  WaterContainer,
-  ContainerPortion,
-} from "../types/waterTracker";
+import type { WaterEntry, WaterTrackerSession } from "../types/waterTracker";
 import styles from "../App.module.css";
 import { calculateDailyProgress } from "../utils/calculateDailyProgress";
 import AddWaterForm from "./AddWaterForm";
@@ -10,7 +6,7 @@ import WaterBottle from "./WaterBottle";
 
 type TrackerScreenProps = {
   session: WaterTrackerSession;
-  onAddWater: (container: WaterContainer, portion: ContainerPortion) => void;
+  onAddWater: (entry: WaterEntry) => void;
 };
 
 // Сессией управляет App, а экран отображает данные и передает действия
@@ -27,6 +23,7 @@ export default function TrackerScreen({
   const formattedProgress = progress.progressPercent.toLocaleString("ru-RU", {
     maximumFractionDigits: 1,
   });
+
   return (
     <main className={styles.page}>
       <section
@@ -48,6 +45,7 @@ export default function TrackerScreen({
 
             <p>{session.dailyGoalMl} мл</p>
           </section>
+
           <section
             className={styles.goalCard}
             aria-labelledby="daily-progress-title"

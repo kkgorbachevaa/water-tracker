@@ -4,7 +4,7 @@ import type {
   ContainerType,
   ContainerVolumeMl,
   ContainerPortion,
-  WaterContainer,
+  WaterEntry,
 } from "../types/waterTracker";
 import {
   containerTypeOptions,
@@ -12,29 +12,50 @@ import {
   containerPortionOptions,
 } from "../data/waterOptions";
 import styles from "../App.module.css";
+import { createContainerEntry } from "../utils/createContainerEntry";
+import { createWaterEntry } from "../utils/createWaterEntry";
+import { parsePositiveSafeInteger } from "../utils/parsePositiveSafeInteger";
 
 type AddWaterFormProps = {
-  onAddWater: (container: WaterContainer, portion: ContainerPortion) => void;
+  onAddWater: (entry: WaterEntry) => void;
 };
 
 export default function AddWaterForm({ onAddWater }: AddWaterFormProps) {
+  const [method, setMethod] = useState<"container" | "manual">("container");
   const [containerType, setContainerType] = useState<ContainerType>("glass");
   const [volumeMl, setVolumeMl] = useState<ContainerVolumeMl>(200);
   const [portion, setPortion] = useState<ContainerPortion>(1);
+  const [manualAmount, setManualAmount] = useState("");
+  const [showManualError, setShowManualError] = useState(false);
 
-  // Объем всегда соответствует текущему выбору
-  const amountMl = volumeMl * portion;
+  const isManual = method === "manual";
+
+  // Проверяем цифры до преобразования, чтобы дробь не округлилась до целого.
+  const manualAmountMl = /^\d+$/.test(manualAmount.trim())
+    ? parsePositiveSafeInteger(manualAmount)
+    : null;
+
+  const amountMl = isManual ? manualAmountMl : volumeMl * portion;
 
   function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    onAddWater(
-      {
-        type: containerType,
-        volumeMl,
-      },
+    if (isManual) {
+      if (manualAmountMl === null) {
+        setShowManualError(true);
+        return;
+      }
+
+      onAddWater(createWaterEntry(manualAmountMl, { method: "manual" }));
+      return;
+    }
+
+    const entry = createContainerEntry(
+      { type: containerType, volumeMl },
       portion,
     );
+
+    onAddWater(entry);
   }
 
   return (
@@ -48,57 +69,116 @@ export default function AddWaterForm({ onAddWater }: AddWaterFormProps) {
       </h2>
 
       <fieldset className={styles.waterOptions}>
-        <legend>Тип емкости</legend>
+        <legend>Способ добавления</legend>
 
-        {containerTypeOptions.map((option) => (
-          <label key={option.value}>
-            <input
-              type="radio"
-              name="container-type"
-              value={option.value}
-              checked={containerType === option.value}
-              onChange={() => setContainerType(option.value)}
-            />
-            {option.label}
-          </label>
-        ))}
+        <label>
+          <input
+            type="radio"
+            name="add-water-method"
+            value="container"
+            checked={!isManual}
+            onChange={() => {
+              setMethod("container");
+              setShowManualError(false);
+            }}
+          />
+          По емкости
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            name="add-water-method"
+            value="manual"
+            checked={isManual}
+            onChange={() => setMethod("manual")}
+          />
+          Вручную
+        </label>
       </fieldset>
 
-      <fieldset className={styles.waterOptions}>
-        <legend>Объем емкости</legend>
+      {isManual ? (
+        <>
+          <label htmlFor="manual-water-amount">Выпитый объем, мл</label>
 
-        {containerVolumeOptions.map((volume) => (
-          <label key={volume}>
-            <input
-              type="radio"
-              name="container-volume"
-              value={volume}
-              checked={volumeMl === volume}
-              onChange={() => setVolumeMl(volume)}
-            />
-            {volume} мл
-          </label>
-        ))}
-      </fieldset>
+          <input
+            id="manual-water-amount"
+            className={styles.goalInput}
+            type="text"
+            inputMode="numeric"
+            value={manualAmount}
+            aria-invalid={showManualError}
+            aria-describedby={
+              showManualError ? "manual-water-error" : undefined
+            }
+            onChange={(event) => {
+              setManualAmount(event.target.value);
+              setShowManualError(false);
+            }}
+          />
 
-      <fieldset className={styles.waterOptions}>
-        <legend>Выпитая доля</legend>
+          {showManualError && (
+            <p id="manual-water-error" className={styles.error} role="alert">
+              Укажи объем в миллилитрах — целое число больше нуля
+            </p>
+          )}
+        </>
+      ) : (
+        <>
+          <fieldset className={styles.waterOptions}>
+            <legend>Тип емкости</legend>
 
-        {containerPortionOptions.map((option) => (
-          <label key={option.value}>
-            <input
-              type="radio"
-              name="container-portion"
-              value={option.value}
-              checked={portion === option.value}
-              onChange={() => setPortion(option.value)}
-            />
-            {option.label}
-          </label>
-        ))}
-      </fieldset>
+            {containerTypeOptions.map((option) => (
+              <label key={option.value}>
+                <input
+                  type="radio"
+                  name="container-type"
+                  value={option.value}
+                  checked={containerType === option.value}
+                  onChange={() => setContainerType(option.value)}
+                />
+                {option.label}
+              </label>
+            ))}
+          </fieldset>
 
-      <p>К добавлению: {amountMl} мл</p>
+          <fieldset className={styles.waterOptions}>
+            <legend>Объем емкости</legend>
+
+            {containerVolumeOptions.map((volume) => (
+              <label key={volume}>
+                <input
+                  type="radio"
+                  name="container-volume"
+                  value={volume}
+                  checked={volumeMl === volume}
+                  onChange={() => setVolumeMl(volume)}
+                />
+                {volume} мл
+              </label>
+            ))}
+          </fieldset>
+
+          <fieldset className={styles.waterOptions}>
+            <legend>Выпитая доля</legend>
+
+            {containerPortionOptions.map((option) => (
+              <label key={option.value}>
+                <input
+                  type="radio"
+                  name="container-portion"
+                  value={option.value}
+                  checked={portion === option.value}
+                  onChange={() => setPortion(option.value)}
+                />
+                {option.label}
+              </label>
+            ))}
+          </fieldset>
+        </>
+      )}
+
+      <p>К добавлению: {amountMl === null ? "—" : `${amountMl} мл`}</p>
 
       <button className={styles.startButton} type="submit">
         Добавить запись
