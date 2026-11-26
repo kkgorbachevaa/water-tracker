@@ -105,6 +105,9 @@ describe("Добавление воды в сессию", () => {
       name: "Добавить запись",
     });
 
+    const goalStatus = within(progressCard).getByRole("status");
+    expect(goalStatus).toBeEmptyDOMElement();
+
     await user.click(addButton);
 
     expect(
@@ -114,6 +117,11 @@ describe("Добавление воды в сессию", () => {
     expect(
       within(progressCard).getByText("Выполнение цели: 100%"),
     ).toBeInTheDocument();
+
+    expect(within(goalStatus).getByText("Цель достигнута")).toBeInTheDocument();
+    expect(
+      within(goalStatus).queryByText(/больше, чем планировалось/),
+    ).not.toBeInTheDocument();
 
     await user.click(screen.getByRole("radio", { name: "300 мл" }));
     await user.click(screen.getByRole("radio", { name: "Половина" }));
@@ -129,6 +137,10 @@ describe("Добавление воды в сессию", () => {
 
     expect(
       within(progressCard).getByText("Выполнение цели: 175%"),
+    ).toBeInTheDocument();
+
+    expect(
+      within(goalStatus).getByText("На 150 мл больше, чем планировалось"),
     ).toBeInTheDocument();
 
     await user.click(addButton);

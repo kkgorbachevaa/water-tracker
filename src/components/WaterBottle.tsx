@@ -2,9 +2,13 @@ import styles from "./WaterBottle.module.css";
 
 type WaterBottleProps = {
   levelPercent: number;
+  goalReached: boolean;
 };
 
-export default function WaterBottle({ levelPercent }: WaterBottleProps) {
+export default function WaterBottle({
+  levelPercent,
+  goalReached,
+}: WaterBottleProps) {
   return (
     <div className={styles.bottle} aria-hidden="true">
       <div className={styles.neck} />
@@ -15,7 +19,19 @@ export default function WaterBottle({ levelPercent }: WaterBottleProps) {
           style={{ height: `${levelPercent}%` }}
         />
       </div>
-      <div className={styles.cap} />
+      <div className={styles.cap}>
+        {goalReached && (
+          <div className={styles.goalSplash}>
+            <span />
+            <span />
+            <span />
+            <span />
+            <span />
+            <span />
+            <span />
+          </div>
+        )}
+      </div>
     </div>
   );
 }

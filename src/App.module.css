@@ -43,6 +43,25 @@
   font-weight: 700;
 }
 
+.goalStatus {
+  display: grid;
+  gap: 6px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  color: #174a74;
+  background-color: #e8f5ff;
+  overflow-wrap: anywhere;
+}
+
+.goalStatus:empty {
+  position: absolute;
+  padding: 0;
+}
+
+.goalReached {
+  font-weight: 700;
+}
+
 .startContent {
   display: grid;
   gap: 18px;
@@ -295,5 +314,44 @@
   /* На самых узких экранах оставляем место для полных подписей */
   .waterOptions {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .goalCelebration {
+    isolation: isolate;
+  }
+
+  .goalCelebration::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(
+      160deg,
+      transparent 36%,
+      rgb(56 189 248 / 24%) 50%,
+      transparent 64%
+    );
+    background-size: 100% 260%;
+    animation: goalWave 1.4s ease-in-out both;
+  }
+}
+
+@keyframes goalWave {
+  from {
+    opacity: 0;
+    background-position: center bottom;
+  }
+
+  25%,
+  65% {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+    background-position: center top;
   }
 }

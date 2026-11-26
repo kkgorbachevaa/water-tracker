@@ -62,8 +62,98 @@
   background: linear-gradient(90deg, #147fbf, #5cb9ed 40%, #1177b9);
 }
 
+.goalSplash {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.goalSplash > span {
+  --direction: 0deg;
+  --distance: 32px;
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  width: 12px;
+  height: 12px;
+  border: 0;
+border-radius: 52% 48% 58% 42% / 46% 52% 48% 54%;
+background:
+  radial-gradient(ellipse at 32% 28%, #fff 0 8%, transparent 28%),
+  radial-gradient(
+    ellipse at 40% 35%,
+    rgb(181 234 255 / 45%) 20%,
+    rgb(78 174 220 / 72%) 72%,
+    rgb(31 123 181 / 82%) 100%
+  );
+  animation: splashDrop 950ms ease-out both;
+}
+
+.goalSplash > span:nth-child(1),
+.goalSplash > span:nth-child(7) {
+  --distance: 62px;
+}
+
+.goalSplash > span:nth-child(2),
+.goalSplash > span:nth-child(6) {
+  --distance: 56px;
+}
+
+.goalSplash > span:nth-child(3),
+.goalSplash > span:nth-child(5) {
+  --distance: 36px;
+}
+
+.goalSplash > span:nth-child(1) {
+  --direction: -85deg;
+}
+
+.goalSplash > span:nth-child(2) {
+  --direction: -62deg;
+}
+
+.goalSplash > span:nth-child(3) {
+  --direction: -32deg;
+}
+
+.goalSplash > span:nth-child(5) {
+  --direction: 32deg;
+}
+
+.goalSplash > span:nth-child(6) {
+  --direction: 62deg;
+}
+
+.goalSplash > span:nth-child(7) {
+  --direction: 85deg;
+}
+
+@keyframes splashDrop {
+  from {
+    opacity: 0;
+    transform: rotate(var(--direction)) translateY(0) rotate(45deg) scale(0.5);
+  }
+
+  14%,
+  58% {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+    transform: rotate(var(--direction)) translateY(calc(-1 * var(--distance)))
+      rotate(45deg) scale(0.9);
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .water {
     transition: height 350ms ease-out;
+  }
+
+  .goalSplash {
+    visibility: visible;
   }
 }

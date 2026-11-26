@@ -20,6 +20,9 @@ export default function TrackerScreen({
 }: TrackerScreenProps) {
   const progress = calculateDailyProgress(session);
 
+  const goalDifferenceMl = progress.consumedMl - session.dailyGoalMl;
+  const goalReached = goalDifferenceMl >= 0;
+
   // Округляем только отображение, сохраняя точность самих расчетов
   const formattedProgress = progress.progressPercent.toLocaleString("ru-RU", {
     maximumFractionDigits: 1,
@@ -27,7 +30,7 @@ export default function TrackerScreen({
   return (
     <main className={styles.page}>
       <section
-        className={`${styles.startScreen} ${styles.trackerScreen}`}
+        className={`${styles.startScreen} ${styles.trackerScreen} ${goalReached ? styles.goalCelebration : ""}`}
         aria-labelledby="tracker-title"
       >
         <h1 id="tracker-title" className={styles.title}>
@@ -54,7 +57,10 @@ export default function TrackerScreen({
             </h2>
 
             <div className={styles.progressContent}>
-              <WaterBottle levelPercent={progress.bottleLevelPercent} />
+              <WaterBottle
+                levelPercent={progress.bottleLevelPercent}
+                goalReached={goalReached}
+              />
 
               <div className={styles.progressMetrics}>
                 <p className={styles.remainingMetric}>
@@ -63,6 +69,18 @@ export default function TrackerScreen({
                 <p>Выпито: {progress.consumedMl}&nbsp;мл</p>
                 <p>Выполнение цели: {formattedProgress}%</p>
               </div>
+            </div>
+
+            <div className={styles.goalStatus} role="status">
+              {goalReached && (
+                <p className={styles.goalReached}>
+                  <span aria-hidden="true">✓</span> Цель достигнута
+                </p>
+              )}
+
+              {goalDifferenceMl > 0 && (
+                <p>На {goalDifferenceMl}&nbsp;мл больше, чем планировалось</p>
+              )}
             </div>
           </section>
         </div>
