@@ -3,19 +3,15 @@ import type {
   ContainerPortion,
   WaterEntry,
 } from "../types/waterTracker";
+import { createWaterEntry } from "./createWaterEntry";
 
 export function createContainerEntry(
   container: WaterContainer,
   portion: ContainerPortion,
 ): WaterEntry {
-  return {
-    id: crypto.randomUUID(),
-    amountMl: container.volumeMl * portion,
-    addedAt: new Date().toISOString(),
-    source: {
-      method: "container",
-      container,
-      portion,
-    },
-  };
+  return createWaterEntry(container.volumeMl * portion, {
+    method: "container",
+    container,
+    portion,
+  });
 }

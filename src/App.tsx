@@ -1,14 +1,10 @@
 import waterBottleImage from "./assets/water-bottle.png";
 import styles from "./App.module.css";
 import { useState } from "react";
-import type {
-  WaterTrackerSession,
-  WaterContainer,
-  ContainerPortion,
-} from "./types/waterTracker";
+import type { WaterEntry, WaterTrackerSession } from "./types/waterTracker";
 import type { SubmitEvent } from "react";
 import TrackerScreen from "./components/TrackerScreen";
-import { createContainerEntry } from "./utils/createContainerEntry";
+import { parsePositiveSafeInteger } from "./utils/parsePositiveSafeInteger";
 
 function App() {
   // Храним ввод строкой, чтобы пользователь мог полностью очистить поле
@@ -23,10 +19,9 @@ function App() {
     // Обрабатываем отправку формы в React без перезагрузки страницы
     event.preventDefault();
 
-    // Преобразуем строку в число только перед проверкой цели
-    const dailyGoalMl = Number(dailyGoal);
+    const dailyGoalMl = parsePositiveSafeInteger(dailyGoal);
 
-    if (!Number.isSafeInteger(dailyGoalMl) || dailyGoalMl <= 0) {
+    if (dailyGoalMl === null) {
       setError("Укажи цель в миллилитрах — целое число больше нуля");
       return;
     }
@@ -41,22 +36,21 @@ function App() {
     });
   }
 
-  function handleAddWater(
-    container: WaterContainer,
-    portion: ContainerPortion,
-  ) {
-    // Создаем запись один раз на отправку формы
-    const entry = createContainerEntry(container, portion);
-
+  function handleAddWater(entry: WaterEntry) {
     setSession((currentSession) => {
       if (currentSession === null) {
         return currentSession;
       }
 
+      const lastSelectedContainer =
+        entry.source.method === "container"
+          ? entry.source.container
+          : currentSession.lastSelectedContainer;
+
       return {
         ...currentSession,
         entries: [...currentSession.entries, entry],
-        lastSelectedContainer: container,
+        lastSelectedContainer,
       };
     });
   }

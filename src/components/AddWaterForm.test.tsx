@@ -23,8 +23,14 @@ describe("Форма добавления воды", () => {
 
     expect(onAddWater).toHaveBeenCalledTimes(1);
     expect(onAddWater).toHaveBeenCalledWith(
-      { type: "glass", volumeMl: 200 },
-      1,
+      expect.objectContaining({
+        amountMl: 200,
+        source: {
+          method: "container",
+          container: { type: "glass", volumeMl: 200 },
+          portion: 1,
+        },
+      }),
     );
   });
 
@@ -69,8 +75,14 @@ describe("Форма добавления воды", () => {
 
     expect(onAddWater).toHaveBeenCalledTimes(1);
     expect(onAddWater).toHaveBeenCalledWith(
-      { type: "bottle", volumeMl: 300 },
-      testCase.portion,
+      expect.objectContaining({
+        amountMl: testCase.amountMl,
+        source: {
+          method: "container",
+          container: { type: "bottle", volumeMl: 300 },
+          portion: testCase.portion,
+        },
+      }),
     );
   });
 
@@ -100,8 +112,14 @@ describe("Форма добавления воды", () => {
 
     expect(onAddWater).toHaveBeenCalledTimes(2);
     expect(onAddWater).toHaveBeenLastCalledWith(
-      { type: "bottle", volumeMl: 500 },
-      0.5,
+      expect.objectContaining({
+        amountMl: 250,
+        source: {
+          method: "container",
+          container: { type: "bottle", volumeMl: 500 },
+          portion: 0.5,
+        },
+      }),
     );
   });
 
@@ -110,6 +128,9 @@ describe("Форма добавления воды", () => {
     const onAddWater = vi.fn();
 
     render(<AddWaterForm onAddWater={onAddWater} />);
+
+    await user.tab();
+    expect(screen.getByRole("radio", { name: "По емкости" })).toHaveFocus();
 
     await user.tab();
     await user.keyboard("{ArrowRight}");
@@ -128,14 +149,83 @@ describe("Форма добавления воды", () => {
 
     await user.tab();
 
-    expect(screen.getByRole("button", { name: "Добавить запись" })).toHaveFocus();
+    expect(
+      screen.getByRole("button", { name: "Добавить запись" }),
+    ).toHaveFocus();
 
     await user.keyboard("{Enter}");
 
     expect(onAddWater).toHaveBeenCalledTimes(1);
     expect(onAddWater).toHaveBeenCalledWith(
-      { type: "cup", volumeMl: 300 },
-      0.75,
+      expect.objectContaining({
+        amountMl: 225,
+        source: {
+          method: "container",
+          container: { type: "cup", volumeMl: 300 },
+          portion: 0.75,
+        },
+      }),
+    );
+  });
+
+  it.each([
+    ["пустое поле", ""],
+    ["ноль", "0"],
+    ["отрицательное число", "-5"],
+    ["дробное число", "12.5"],
+    ["дробь, которая округляется до целого", "275.00000000000001"],
+    ["число больше безопасного диапазона", "9007199254740992"],
+  ])("показывает ошибку ручного ввода — %s", async (_label, value) => {
+    const user = userEvent.setup();
+    const onAddWater = vi.fn();
+
+    render(<AddWaterForm onAddWater={onAddWater} />);
+
+    await user.click(screen.getByRole("radio", { name: "Вручную" }));
+    const amountInput = screen.getByRole("textbox", {
+      name: "Выпитый объем, мл",
+    });
+
+    if (value !== "") {
+      await user.type(amountInput, value);
+    }
+
+    await user.click(screen.getByRole("button", { name: "Добавить запись" }));
+
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "Укажи объем в миллилитрах — целое число больше нуля",
+    );
+    expect(amountInput).toHaveAttribute("aria-invalid", "true");
+    expect(screen.getByText("К добавлению: —")).toBeInTheDocument();
+    expect(onAddWater).not.toHaveBeenCalled();
+  });
+
+  it("позволяет исправить ручной объем и добавить запись по Enter", async () => {
+    const user = userEvent.setup();
+    const onAddWater = vi.fn();
+
+    render(<AddWaterForm onAddWater={onAddWater} />);
+
+    await user.click(screen.getByRole("radio", { name: "Вручную" }));
+    await user.click(screen.getByRole("button", { name: "Добавить запись" }));
+    expect(screen.getByRole("alert")).toBeInTheDocument();
+
+    const amountInput = screen.getByRole("textbox", {
+      name: "Выпитый объем, мл",
+    });
+    await user.type(amountInput, "275");
+
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    expect(screen.getByText("К добавлению: 275 мл")).toBeInTheDocument();
+
+    await user.keyboard("{Enter}");
+
+    expect(onAddWater).toHaveBeenCalledTimes(1);
+    expect(onAddWater).toHaveBeenCalledWith(
+      expect.objectContaining({
+        amountMl: 275,
+        source: { method: "manual" },
+      }),
     );
   });
 });

@@ -57,6 +57,38 @@ describe("Добавление воды в сессию", () => {
     expect(
       within(progressCard).getByText("Выполнение цели: 17,5%"),
     ).toBeInTheDocument();
+
+    await user.click(screen.getByRole("radio", { name: "Вручную" }));
+    await user.type(
+      screen.getByRole("textbox", { name: "Выпитый объем, мл" }),
+      "275",
+    );
+    await user.click(addButton);
+
+    expect(
+      within(progressCard).getByText("Выпито: 625 мл"),
+    ).toBeInTheDocument();
+    expect(
+      within(progressCard).getByText("Осталось: 1375 мл"),
+    ).toBeInTheDocument();
+    expect(
+      within(progressCard).getByText("Выполнение цели: 31,3%"),
+    ).toBeInTheDocument();
+    expect(screen.getByTestId("bottle-water")).toHaveStyle({
+      height: "68.75%",
+    });
+
+    await user.click(screen.getByRole("radio", { name: "По емкости" }));
+
+    expect(screen.getByRole("radio", { name: "300 мл" })).toBeChecked();
+    expect(screen.getByRole("radio", { name: "Половина" })).toBeChecked();
+    expect(screen.getByText("К добавлению: 150 мл")).toBeInTheDocument();
+
+    await user.click(addButton);
+
+    expect(
+      within(progressCard).getByText("Выпито: 775 мл"),
+    ).toBeInTheDocument();
   });
 
   it("уменьшает уровень воды в бутылке при добавлении записи", async () => {
